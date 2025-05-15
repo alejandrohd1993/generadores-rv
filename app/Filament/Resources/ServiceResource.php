@@ -169,11 +169,11 @@ class ServiceResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('date_start')
                     ->label('Fecha de inicio')
-                    ->dateTime()
+                    ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date_final')
                     ->label('Fecha finalización')
-                    ->dateTime()
+                    ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('estado'),
                 Tables\Columns\TextColumn::make('facturado'),

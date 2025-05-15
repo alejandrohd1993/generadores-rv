@@ -183,6 +183,7 @@ class UsageResource extends Resource
                 Tables\Columns\TextColumn::make('tipo'),
                 Tables\Columns\TextColumn::make('reference_id')
                     ->numeric()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('horometro_inicio'),
                 Tables\Columns\TextColumn::make('horometro_fin'),

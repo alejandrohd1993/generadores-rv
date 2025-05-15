@@ -14,6 +14,8 @@ class Generator extends Model
         'marca',
         'horometro',
         'estado',
+        'ultimo_mantenimiento_filtro',
+        'ultimo_mantenimiento_aceite',
     ];
 
     public function services(): BelongsToMany
@@ -27,5 +29,10 @@ class Generator extends Model
     public function maintenances(): HasMany
     {
         return $this->hasMany(Maintenance::class);
+    }
+
+    public function usages(): HasMany
+    {
+        return $this->hasMany(Usage::class);
     }
 }

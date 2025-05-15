@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('lugar');
-            $table->dateTime('date_start');
-            $table->dateTime('date_final');
+            $table->date('date_start');
+            $table->date('date_final');
             $table->enum('estado', ['Pendiente', 'En proceso', 'Completado', 'Cancelado']);
             $table->decimal('presupuesto_combustible', 12, 2)->nullable();
             $table->decimal('presupuesto_viaticos', 12, 2)->nullable();

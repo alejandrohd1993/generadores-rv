@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('marca')->nullable();
             $table->string('horometro')->nullable();
             $table->enum('estado', ['Disponible', 'En uso', 'En mantenimiento', 'Fuera de servicio']);
+            $table->string('ultimo_mantenimiento_filtro')->nullable();
+            $table->string('ultimo_mantenimiento_aceite')->nullable();
 
             $table->timestamps();
         });

@@ -6,6 +6,7 @@ use App\Filament\Resources\GeneratorResource\Pages;
 use App\Filament\Resources\GeneratorResource\RelationManagers;
 use App\Models\Generator;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -50,6 +51,14 @@ class GeneratorResource extends Resource
                         'Fuera de servicio' => 'Fuera de servicio',
                     ])
                     ->required(),
+                Section::make('Último Mantenimiento')
+                    ->schema([
+                        Forms\Components\TextInput::make('ultimo_mantenimiento_filtro')
+                            ->label('Horómetro Último Mantenimiento de Filtro'),
+                        Forms\Components\TextInput::make('ultimo_mantenimiento_aceite')
+                            ->label('Horómetro Último Mantenimiento de Aceite'),
+                    ])
+                    ->columns(2),
             ]);
     }
 
