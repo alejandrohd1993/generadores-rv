@@ -30,4 +30,5 @@ class Usage extends Model
             default => null,
         };
     }
+    
 }

@@ -18,9 +18,9 @@ return new class extends Migration
             $table->foreignId('generator_id')->constrained('generators')->onDelete('cascade');
             $table->enum('tipo', ['servicio', 'mantenimiento']);
             $table->unsignedBigInteger('reference_id');
-            $table->time('horometro_inicio')->nullable();
-            $table->time('horometro_fin')->nullable();
-            $table->time('horas_trabajadas')->nullable();
+            $table->string('horometro_inicio')->nullable();
+            $table->string('horometro_fin')->nullable();
+            $table->string('horas_trabajadas')->nullable();
 
             $table->timestamps();
         });
