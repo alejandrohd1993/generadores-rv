@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\NotificacionMantenimientoService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -16,6 +17,15 @@ class Usage extends Model
         'horometro_fin',
         'horas_trabajadas',
     ];
+
+    // protected static function booted()
+    // {
+    //     static::created(function ($usage) {
+    //         // Verificar notificaciones de mantenimiento después de crear un nuevo uso
+    //         $generator = $usage->generator;
+    //         app(NotificacionMantenimientoService::class)->verificarNotificaciones($generator);
+    //     });
+    // }
 
     public function generator(): BelongsTo
     {

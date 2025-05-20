@@ -3,8 +3,13 @@
 namespace App\Filament\Resources\ServiceResource\Pages;
 
 use App\Filament\Resources\ServiceResource;
+use App\Mail\ServicioCreado;
 use Filament\Actions;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class CreateService extends CreateRecord
 {
@@ -23,6 +28,27 @@ class CreateService extends CreateRecord
                     'horas_trabajadas' => $generatorData['horas_trabajadas'],
                 ]
             );
+        }
+
+        // // Enviar notificación a la base de datos
+        // Notification::make()
+        //     ->title('Servicio creado')
+        //     ->body("El servicio {$this->record->nombre} ha sido creado exitosamente.")
+        //     ->success()
+        //     ->actions([
+        //         Action::make('ver_servicio')
+        //             ->button()
+        //             ->url("/admin/services/{$this->record->id}")
+        //     ])
+        //     ->sendToDatabase(Auth::user());
+
+        // Enviar correo electrónico al usuario asignado
+        if (isset($this->record->user_id) && $this->record->user_id) {
+            $usuario = $this->record->user;
+            if ($usuario && $usuario->email) {
+                Mail::to($usuario->email)
+                    ->send(new ServicioCreado($this->record));
+            }
         }
     }
 

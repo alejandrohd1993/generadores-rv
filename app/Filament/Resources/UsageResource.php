@@ -178,25 +178,22 @@ class UsageResource extends Resource
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('generator.codigo')
-                    ->numeric()
-                    ->sortable(),
+                    ->numeric(),
                 Tables\Columns\TextColumn::make('tipo'),
                 Tables\Columns\TextColumn::make('reference_id')
                     ->numeric()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->sortable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('horometro_inicio'),
                 Tables\Columns\TextColumn::make('horometro_fin'),
                 Tables\Columns\TextColumn::make('horas_trabajadas'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('fecha', 'desc')
             ->filters([
                 //
             ])

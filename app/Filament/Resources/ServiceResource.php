@@ -6,6 +6,8 @@ use App\Filament\Resources\ServiceResource\Pages;
 use App\Filament\Resources\ServiceResource\RelationManagers;
 use App\Models\Service;
 use App\Models\Generator;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -190,7 +192,24 @@ class ServiceResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Action::make('marcarComoFacturado')
+                        ->label('Marcar Facturado')
+                        ->icon('heroicon-o-check-circle')
+                        ->visible(fn ($record) => $record->facturado === 'No')
+                        ->action(function (Service $record) {
+                            $record->update(['facturado' => 'Si']);
+                        }),
+                        Action::make('marcarComoCompletado')
+                        ->label('Marcar Completado')
+                        ->icon('heroicon-o-document-check')
+                        ->visible(fn ($record) => $record->estado !== 'Completado')
+                        ->action(function (Service $record) {
+                            $record->update(['estado' => 'Completado']);
+                        }),
+                    Tables\Actions\DeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
