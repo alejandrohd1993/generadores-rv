@@ -15,6 +15,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Http\Request;
 
 class UsageResource extends Resource
 {
@@ -32,14 +33,18 @@ class UsageResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $tipo = request()->query('tipo');
+        $referenceId = request()->query('service_id');
         return $form
             ->schema([
                 Forms\Components\DatePicker::make('fecha')
                     ->required(),
                 Forms\Components\Select::make('tipo')
+                    ->default($tipo)
                     ->options([
                         'servicio' => 'Servicio',
                         'mantenimiento' => 'Mantenimiento',
+                        'preoperativo' => 'Preoperativo',
                     ])
                     ->required()
                     ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
@@ -48,11 +53,13 @@ class UsageResource extends Resource
                     })
                     ->live(),
                 Forms\Components\Select::make('reference_id')
+                    ->default($referenceId)
                     ->label('Relacionado con')
                     ->options(function (callable $get) {
                         return match ($get('tipo')) {
-                            'servicio' => Service::pluck('nombre', 'id'),
-                            'mantenimiento' => Maintenance::pluck('nombre', 'id'),
+                            'servicio' => \App\Models\Service::where('estado', '!=', 'Completado')->pluck('nombre', 'id'),
+                            'mantenimiento' => \App\Models\Maintenance::where('estado', '!=', 'Completado')->pluck('nombre', 'id'),
+                            'preoperativo' => \App\Models\Service::where('estado', '!=', 'Completado')->pluck('nombre', 'id'),
                             default => [],
                         };
                     })
@@ -60,7 +67,7 @@ class UsageResource extends Resource
                     ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
                         // Cuando cambiamos la referencia, reseteamos el generador
                         $set('generator_id', null);
-                        
+
                         // Si es un mantenimiento, pre-seleccionamos el generador asociado
                         if ($get('tipo') === 'mantenimiento' && $get('reference_id')) {
                             $maintenance = Maintenance::find($get('reference_id'));
@@ -76,11 +83,11 @@ class UsageResource extends Resource
                     ->options(function (Forms\Get $get) {
                         $tipo = $get('tipo');
                         $referenceId = $get('reference_id');
-                        
+
                         if (!$referenceId) {
                             return [];
                         }
-                        
+
                         if ($tipo === 'mantenimiento') {
                             // Si es un mantenimiento, solo mostramos el generador asociado
                             $maintenance = Maintenance::find($referenceId);
@@ -94,8 +101,13 @@ class UsageResource extends Resource
                             return Generator::whereHas('services', function (Builder $query) use ($referenceId) {
                                 $query->where('services.id', $referenceId);
                             })->pluck('codigo', 'id');
+                        }else if ($tipo === 'preoperativo') {
+                            // Si es un servicio, mostramos los generadores vinculados al servicio
+                            return Generator::whereHas('services', function (Builder $query) use ($referenceId) {
+                                $query->where('services.id', $referenceId);
+                            })->pluck('codigo', 'id');
                         }
-                        
+
                         return [];
                     })
                     ->live()

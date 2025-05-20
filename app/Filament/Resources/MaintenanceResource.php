@@ -8,6 +8,7 @@ use App\Models\Maintenance;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,7 +24,7 @@ class MaintenanceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
-        protected static ?string $navigationGroup = 'Operaciones';
+    protected static ?string $navigationGroup = 'Operaciones';
 
     protected static ?int $navigationSort = 3;
 
@@ -38,8 +39,10 @@ class MaintenanceResource extends Resource
                     ->required(),
                 Forms\Components\Select::make('user_id')
                     ->relationship('user', 'name')
+                    ->label('Operador asignado')
                     ->required(),
                 Forms\Components\Select::make('generator_id')
+                    ->label('Generador')
                     ->relationship('generator', 'codigo')
                     ->required(),
                 Forms\Components\Select::make('tipo_mantenimiento')
@@ -49,16 +52,18 @@ class MaintenanceResource extends Resource
                         'otro' => 'Otro',
                     ])
                     ->required(),
-                 Forms\Components\Select::make('categoria_mantenimiento')
+                Forms\Components\Select::make('categoria_mantenimiento')
                     ->options([
                         'preventivo' => 'Preventivo',
                         'correctivo' => 'Correctivo',
+                        'predictivo' => 'Predictivo',
                         'otro' => 'Otro',
                     ])
                     ->required(),
                 Forms\Components\DatePicker::make('fecha')
                     ->required(),
                 Forms\Components\Select::make('provider_id')
+                    ->label('Proveedor')
                     ->relationship('provider', 'nombre')
                     ->required(),
                 Forms\Components\TextInput::make('descripcion')
@@ -71,7 +76,14 @@ class MaintenanceResource extends Resource
                         'Completado' => 'Completado',
                         'Cancelado' => 'Cancelado',
                     ])
+                    ->default('Pendiente')
                     ->required(),
+                Forms\Components\TextInput::make('costo_mantenimiento')
+                    ->numeric()
+                    ->prefix('$')
+                    ->mask(RawJs::make('$money($input)'))
+                    ->stripCharacters(',')
+                    ->debounce(750)
             ]);
     }
 
@@ -82,19 +94,20 @@ class MaintenanceResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('generator.id')
+                Tables\Columns\TextColumn::make('generator.codigo')
                     ->numeric()
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('tipo_mantenimiento'),
                 Tables\Columns\TextColumn::make('categoria_mantenimiento'),
                 Tables\Columns\TextColumn::make('fecha')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('provider.id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('descripcion')
-                    ->searchable(),
+                // Tables\Columns\TextColumn::make('provider.nombre')
+                //     ->numeric()
+                //     ->sortable(),
+                // Tables\Columns\TextColumn::make('descripcion')
+                //     ->searchable(),
                 Tables\Columns\TextColumn::make('estado'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

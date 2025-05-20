@@ -197,17 +197,33 @@ class ServiceResource extends Resource
                     Action::make('marcarComoFacturado')
                         ->label('Marcar Facturado')
                         ->icon('heroicon-o-check-circle')
-                        ->visible(fn ($record) => $record->facturado === 'No')
+                        ->visible(fn($record) => $record->facturado === 'No')
                         ->action(function (Service $record) {
                             $record->update(['facturado' => 'Si']);
                         }),
-                        Action::make('marcarComoCompletado')
+                    Action::make('marcarComoCompletado')
                         ->label('Marcar Completado')
                         ->icon('heroicon-o-document-check')
-                        ->visible(fn ($record) => $record->estado !== 'Completado')
+                        ->visible(fn($record) => $record->estado !== 'Completado')
                         ->action(function (Service $record) {
                             $record->update(['estado' => 'Completado']);
                         }),
+                    Action::make('crearUsage')
+                        ->label('Registrar Usos')
+                        ->icon('heroicon-o-plus-circle')
+                        ->visible(fn($record) => $record->estado !== 'Completado')
+                        ->url(fn($record) => route('filament.admin.resources.usages.create', [
+                            'tipo' => 'servicio',
+                            'service_id' => $record->id
+                        ])),
+                    Action::make('preoperativo')
+                        ->label('Uso Preoperativo')
+                        ->icon('heroicon-o-adjustments-vertical')
+                        ->visible(fn($record) => $record->estado !== 'Completado')
+                        ->url(fn($record) => route('filament.admin.resources.usages.create', [
+                            'tipo' => 'preoperativo',
+                            'service_id' => $record->id
+                        ])),
                     Tables\Actions\DeleteAction::make(),
                 ])
             ])

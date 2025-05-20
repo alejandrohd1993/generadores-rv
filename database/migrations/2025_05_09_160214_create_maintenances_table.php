@@ -18,11 +18,12 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('generator_id')->constrained('generators')->onDelete('cascade');
             $table->enum('tipo_mantenimiento', ['aceite', 'filtro','otro']);
-            $table->enum('categoria_mantenimiento', ['preventivo', 'correctivo','otro']);
+            $table->enum('categoria_mantenimiento', ['preventivo', 'correctivo', 'predictivo', 'otro']);
             $table->date('fecha');
             $table->foreignId('provider_id')->constrained('providers')->onDelete('cascade');
             $table->string('descripcion')->nullable();
             $table->enum('estado', ['Pendiente', 'En proceso', 'Completado', 'Cancelado']);
+            $table->decimal('costo_mantenimiento', 12, 2)->nullable();
 
             $table->timestamps();
         });

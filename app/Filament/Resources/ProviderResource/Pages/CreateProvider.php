@@ -16,13 +16,4 @@ class CreateProvider extends CreateRecord
     {
         return $this->getResource()::getUrl('index');
     }
-
-    protected function afterCreate(): void
-    {
-
-        $recipient = Auth::user();
-        Notification::make()
-            ->title('Probando notificaciones')
-            ->sendToDatabase($recipient);
-    }
 }
