@@ -6,6 +6,7 @@ use App\Filament\Resources\ServiceResource\Pages;
 use App\Filament\Resources\ServiceResource\RelationManagers;
 use App\Models\Service;
 use App\Models\Generator;
+use App\Mail\ServicioCompletado;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms;
@@ -19,6 +20,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Mail;
+use Filament\Notifications\Notification;
 
 
 
@@ -207,6 +210,13 @@ class ServiceResource extends Resource
                         ->visible(fn($record) => $record->estado !== 'Completado')
                         ->action(function (Service $record) {
                             $record->update(['estado' => 'Completado']);
+                            
+                            // Enviar correo a contabilidad
+                            $emailContabilidad = 'anthonyjdiaz89@gmail.com';
+                            
+                            Mail::to($emailContabilidad)
+                                ->send(new ServicioCompletado($record));
+                                
                         }),
                     Action::make('crearUsage')
                         ->label('Registrar Usos')
