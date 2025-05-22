@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MaintenanceResource\Pages;
 use App\Filament\Resources\MaintenanceResource\RelationManagers;
 use App\Models\Maintenance;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -118,11 +120,30 @@ class MaintenanceResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('fecha', 'desc')
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Action::make('marcarComoCompletado')
+                        ->label('Marcar Completado')
+                        ->icon('heroicon-o-document-check')
+                        ->visible(fn($record) => $record->estado !== 'Completado')
+                        ->action(function (Maintenance $record) {
+                            $record->update(['estado' => 'Completado']);
+                        }),
+                    Action::make('crearUsage')
+                        ->label('Registrar Usos')
+                        ->icon('heroicon-o-plus-circle')
+                        ->visible(fn($record) => $record->estado !== 'Completado')
+                        ->url(fn($record) => route('filament.admin.resources.usages.create', [
+                            'tipo' => 'mantenimiento',
+                            'service_id' => $record->id
+                        ])),
+                    Tables\Actions\DeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

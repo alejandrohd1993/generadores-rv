@@ -64,9 +64,7 @@
                 <p>Por favor, programe el mantenimiento lo antes posible para evitar daños en el equipo.</p>
             @endif
             
-            <p>
-                <a href="{{ url('/admin/generators') }}" class="button">Ver Generadores</a>
-            </p>
+            
         </div>
         <div class="footer">
             <p>Este es un mensaje automático del sistema de Generadores RV. Por favor no responda a este correo.</p>

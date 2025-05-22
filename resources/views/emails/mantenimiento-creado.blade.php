@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Nuevo Servicio Asignado</title>
+    <title>Nuevo Mantenimiento Asignado</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -63,56 +63,36 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>Nuevo Servicio Asignado</h2>
+            <h2>Nuevo Mantenimiento Asignado</h2>
         </div>
         <div class="content">
             <p>Estimado usuario,</p>
             
-            <p>Se le ha asignado un nuevo servicio con los siguientes detalles:</p>
+            <p>Se le ha asignado un nuevo mantenimiento con los siguientes detalles:</p>
             
             <table>
                 <tr>
-                    <th>Nombre del Servicio</th>
-                    <td>{{ $servicio->nombre }}</td>
+                    <th>Nombre del Mantenimiento</th>
+                    <td>{{ $mantenimiento->nombre }}</td>
                 </tr>
                 <tr>
-                    <th>Lugar</th>
-                    <td>{{ $servicio->lugar }}</td>
+                    <th>Fecha</th>
+                    <td>{{ $mantenimiento->fecha }}</td>
                 </tr>
                 <tr>
-                    <th>Fecha de Inicio</th>
-                    <td>{{ $servicio->date_start }}</td>
+                    <th>Generador</th>
+                    <td>{{ $generador->codigo }} - {{ $generador->marca }}</td>
                 </tr>
                 <tr>
-                    <th>Fecha de Finalización</th>
-                    <td>{{ $servicio->date_final }}</td>
+                    <th>Proveedor</th>
+                    <td>{{ $proveedor->nombre }}</td>
+                </tr>
+                <tr>
+                    <th>Descripción</th>
+                    <td>{{ $mantenimiento->descripcion }}</td>
                 </tr>
             </table>
             
-            <h3>Generadores Asignados:</h3>
-            
-            @if(count($generadores) > 0)
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Marca</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($generadores as $generador)
-                            <tr>
-                                <td>{{ $generador->codigo }}</td>
-                                <td>{{ $generador->marca }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @else
-                <p>No hay generadores asignados a este servicio.</p>
-            @endif
-            
-           
         </div>
         <div class="footer">
             <p>Este es un mensaje automático del sistema de Generadores RV. Por favor no responda a este correo.</p>
