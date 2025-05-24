@@ -28,8 +28,13 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->favicon('https://rvproducciones.com.co/wp-content/uploads/2023/01/LOGO-2.png')
+            ->brandLogo('https://rvproducciones.com.co/wp-content/uploads/2023/01/LOGO-2.png')
+            ->brandName('Generadores RBA')
+            ->brandLogoHeight('3rem')
+            ->font('Montserrat')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => '#E02317',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
