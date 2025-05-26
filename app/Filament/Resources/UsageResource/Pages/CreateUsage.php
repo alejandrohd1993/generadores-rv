@@ -22,7 +22,7 @@ class CreateUsage extends CreateRecord
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('index');
+        return route('filament.admin.resources.services.index');
     }
 
     protected function afterCreate(): void

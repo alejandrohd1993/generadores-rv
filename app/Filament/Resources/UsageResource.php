@@ -11,6 +11,7 @@ use App\Models\Usage;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -101,7 +102,7 @@ class UsageResource extends Resource
                             return Generator::whereHas('services', function (Builder $query) use ($referenceId) {
                                 $query->where('services.id', $referenceId);
                             })->pluck('codigo', 'id');
-                        }else if ($tipo === 'preoperativo') {
+                        } else if ($tipo === 'preoperativo') {
                             // Si es un servicio, mostramos los generadores vinculados al servicio
                             return Generator::whereHas('services', function (Builder $query) use ($referenceId) {
                                 $query->where('services.id', $referenceId);
@@ -179,6 +180,19 @@ class UsageResource extends Resource
                                 self::actualizarHorometroFin($get, $set);
                             }),
                     ]),
+
+                Forms\Components\TextInput::make('combustible')
+                    ->label('Gasto por combustible')
+                    ->numeric()
+                    ->prefix('$')
+                    ->mask(RawJs::make('$money($input)'))
+                    ->stripCharacters(','),
+                Forms\Components\TextInput::make('otros_gastos')
+                    ->label('Otros gastos Generador')
+                    ->numeric()
+                    ->prefix('$')
+                    ->mask(RawJs::make('$money($input)'))
+                    ->stripCharacters(','),
             ]);
     }
 

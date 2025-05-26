@@ -77,6 +77,11 @@ class ServiceResource extends Resource
                             ])
                             ->default('No')
                             ->required(),
+                        Forms\Components\TextInput::make('valor_servicio')
+                            ->numeric()
+                            ->prefix('$')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters(','),
                     ])
                     ->columns(2),
 
@@ -93,7 +98,7 @@ class ServiceResource extends Resource
 
                 Section::make('Presupuesto')
                     ->schema([
-                        Forms\Components\TextInput::make('presupuesto_combustible')
+                        Forms\Components\TextInput::make('presupuesto_viaticos')
                             ->numeric()
                             ->prefix('$')
                             ->mask(RawJs::make('$money($input)'))
@@ -102,13 +107,13 @@ class ServiceResource extends Resource
                             ->debounce(750)
                             ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                 // Asegurarse de que siempre tenga un valor para la suma
-                                $viaticos = floatval(preg_replace('/[^0-9.]/', '', $get('presupuesto_viaticos') ?? '0'));
+                                $viaticos = floatval(preg_replace('/[^0-9.]/', '', $get('presupuesto_otros_gastos') ?? '0'));
                                 $combustible = floatval(preg_replace('/[^0-9.]/', '', $state ?? '0'));
                                 $total = $combustible + $viaticos;
                                 // Aplicamos el formato de miles al total
                                 $set('presupuesto_total', number_format($total, 2, '.', ','));
                             }),
-                        Forms\Components\TextInput::make('presupuesto_viaticos')
+                        Forms\Components\TextInput::make('presupuesto_otros_gastos')
                             ->numeric()
                             ->prefix('$')
                             ->mask(RawJs::make('$money($input)'))
@@ -116,7 +121,7 @@ class ServiceResource extends Resource
                             ->reactive()
                             ->debounce(500)
                             ->afterStateUpdated(function ($state, Set $set, Get $get) {
-                                $combustible = floatval(preg_replace('/[^0-9.]/', '', $get('presupuesto_combustible') ?? '0'));
+                                $combustible = floatval(preg_replace('/[^0-9.]/', '', $get('presupuesto_viaticos') ?? '0'));
                                 $viaticos = floatval(preg_replace('/[^0-9.]/', '', $state ?? '0'));
                                 $total = $combustible + $viaticos;
                                 $set('presupuesto_total', number_format($total, 2, '.', ','));
@@ -210,13 +215,12 @@ class ServiceResource extends Resource
                         ->visible(fn($record) => $record->estado !== 'Completado')
                         ->action(function (Service $record) {
                             $record->update(['estado' => 'Completado']);
-                            
+
                             // Enviar correo a contabilidad
                             $emailContabilidad = 'anthonyjdiaz89@gmail.com';
-                            
+
                             Mail::to($emailContabilidad)
                                 ->send(new ServicioCompletado($record));
-                                
                         }),
                     Action::make('crearUsage')
                         ->label('Registrar Usos')

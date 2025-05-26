@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Customer;
+use App\Models\Provider;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -18,8 +20,26 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'name' => 'Test User',
-            'email' => 'test@example.com',
+            'email' => 'alejandrohd1993@gmail.com',
             'password' => Hash::make('123456'), // asegúrate de hashearlo
+        ]);
+
+        Provider::create([
+            'nit' => '222222222222',
+            'nombre' => 'Consumidor Final',
+            'email' => 'consumidorfinal@mail.com',
+            'telefono' => '1234567890',
+            'direccion' => 'Calle 123',
+            'tipo_persona' => 'Jurídica',          
+        ]);
+
+        Customer::create([
+            'nit' => '222222222222',
+            'nombre' => 'Consumidor Final',
+            'email' => 'consumidorfinal@mail.com',
+            'telefono' => '1234567890',
+            'direccion' => 'Calle 123',
+            'tipo_persona' => 'Jurídica',          
         ]);
     }
 }

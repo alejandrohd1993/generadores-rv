@@ -16,6 +16,9 @@ class Usage extends Model
         'horometro_inicio',
         'horometro_fin',
         'horas_trabajadas',
+        'combustible',
+        'otros_gastos',
+        'soportes',
     ];
 
     // protected static function booted()

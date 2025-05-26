@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('horometro_inicio')->nullable();
             $table->string('horometro_fin')->nullable();
             $table->string('horas_trabajadas')->nullable();
+            $table->decimal('combustible', 12, 2)->nullable();
+            $table->decimal('otros_gastos', 12, 2)->nullable();
+            $table->string('soportes')->nullable();
 
             $table->timestamps();
         });

@@ -16,9 +16,10 @@ class Service extends Model
         'date_start',
         'date_final',
         'estado',
-        'presupuesto_combustible',
+        'presupuesto_otros_gastos',
         'presupuesto_viaticos',
         'presupuesto_total',
+        'valor_servicio',
         'notas',
         'facturado',
     ];

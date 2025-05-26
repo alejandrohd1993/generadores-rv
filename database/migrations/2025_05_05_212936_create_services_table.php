@@ -21,9 +21,10 @@ return new class extends Migration
             $table->date('date_start');
             $table->date('date_final');
             $table->enum('estado', ['Pendiente', 'En proceso', 'Completado', 'Cancelado']);
-            $table->decimal('presupuesto_combustible', 12, 2)->nullable();
             $table->decimal('presupuesto_viaticos', 12, 2)->nullable();
+            $table->decimal('presupuesto_otros_gastos', 12, 2)->nullable();
             $table->decimal('presupuesto_total', 12, 2)->nullable();
+            $table->decimal('valor_servicio', 12, 2)->nullable();
             $table->string('notas')->nullable();
             $table->enum('facturado', ['Si', 'No']);
 
