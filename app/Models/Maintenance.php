@@ -17,6 +17,7 @@ class Maintenance extends Model
         'provider_id',
         'descripcion',
         'estado',
+        'costo_mantenimiento'
     ];
 
     public function user(): BelongsTo

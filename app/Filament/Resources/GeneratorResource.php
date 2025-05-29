@@ -51,6 +51,7 @@ class GeneratorResource extends Resource
                         'En mantenimiento' => 'En mantenimiento',
                         'Fuera de servicio' => 'Fuera de servicio',
                     ])
+                    ->default('Disponible')
                     ->required(),
                 Section::make('Último Mantenimiento')
                     ->schema([

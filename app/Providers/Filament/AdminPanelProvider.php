@@ -42,6 +42,7 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
                 \App\Filament\Pages\ServicesCalendar::class,
                 \App\Filament\Pages\ServiceReports::class,
+                \App\Filament\Pages\GeneratorReports::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
