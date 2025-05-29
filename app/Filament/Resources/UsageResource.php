@@ -36,10 +36,18 @@ class UsageResource extends Resource
     {
         $tipo = request()->query('tipo');
         $referenceId = request()->query('service_id');
+        $fecha_inicio = request()->query('fecha_inicio');
+        $fecha_final = request()->query('fecha_final');
+        $fecha = request()->query('fecha');
+        $generador_id = request()->query('generador_id');
+
         return $form
             ->schema([
                 Forms\Components\DatePicker::make('fecha')
-                    ->required(),
+                    ->required()
+                    ->default($fecha)
+                    ->minDate($fecha_inicio)
+                    ->maxDate($fecha_final),
                 Forms\Components\Select::make('tipo')
                     ->default($tipo)
                     ->options([
@@ -81,6 +89,7 @@ class UsageResource extends Resource
                 Forms\Components\Select::make('generator_id')
                     ->label('Generador')
                     ->required()
+                    ->default($generador_id)
                     ->options(function (Forms\Get $get) {
                         $tipo = $get('tipo');
                         $referenceId = $get('reference_id');

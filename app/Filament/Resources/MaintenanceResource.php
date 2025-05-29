@@ -140,7 +140,9 @@ class MaintenanceResource extends Resource
                         ->visible(fn($record) => $record->estado !== 'Completado')
                         ->url(fn($record) => route('filament.admin.resources.usages.create', [
                             'tipo' => 'mantenimiento',
-                            'service_id' => $record->id
+                            'service_id' => $record->id,
+                            'fecha' => $record->fecha,
+                            'generador_id' => $record->generator_id,
                         ])),
                     Tables\Actions\DeleteAction::make(),
                 ])

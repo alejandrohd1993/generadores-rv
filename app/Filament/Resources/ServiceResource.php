@@ -228,7 +228,9 @@ class ServiceResource extends Resource
                         ->visible(fn($record) => $record->estado !== 'Completado')
                         ->url(fn($record) => route('filament.admin.resources.usages.create', [
                             'tipo' => 'servicio',
-                            'service_id' => $record->id
+                            'service_id' => $record->id,
+                            'fecha_inicio' => $record->date_start,
+                            'fecha_final' => $record->date_final,
                         ])),
                     Action::make('preoperativo')
                         ->label('Uso Preoperativo')
