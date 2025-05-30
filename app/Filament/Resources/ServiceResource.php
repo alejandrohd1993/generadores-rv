@@ -217,7 +217,7 @@ class ServiceResource extends Resource
                             $record->update(['estado' => 'Completado']);
 
                             // Enviar correo a contabilidad
-                            $emailContabilidad = 'anthonyjdiaz89@gmail.com';
+                            $emailContabilidad = \App\Models\Setting::first()?->accounting_email ?? 'default@correo.com';
 
                             Mail::to($emailContabilidad)
                                 ->send(new ServicioCompletado($record));

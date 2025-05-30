@@ -36,6 +36,7 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('email')->email()->required(),
                 Forms\Components\TextInput::make('password')
                     ->password()
+                    ->revealable()
                     ->required(fn(string $context) => $context === 'create')
                     ->dehydrated(fn($state) => filled($state))
                     ->dehydrateStateUsing(fn($state) => bcrypt($state)),

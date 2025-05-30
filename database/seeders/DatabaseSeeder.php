@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Customer;
 use App\Models\Provider;
+use App\Models\Setting;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -33,17 +34,17 @@ class DatabaseSeeder extends Seeder
         // Asignar rol administrador
         $adminUser->assignRole($adminRole);
 
-        // Crear usuario operador
-        $operatorUser = User::firstOrCreate(
-            ['email' => 'operador@mail.com'],
-            [
-                'name' => 'Operador Demo',
-                'password' => Hash::make('123456'),
-            ]
-        );
+        // // Crear usuario operador
+        // $operatorUser = User::firstOrCreate(
+        //     ['email' => 'operador@mail.com'],
+        //     [
+        //         'name' => 'Operador Demo',
+        //         'password' => Hash::make('123456'),
+        //     ]
+        // );
 
-        // Asignar rol operador
-        $operatorUser->assignRole($operatorRole);
+        // // Asignar rol operador
+        // $operatorUser->assignRole($operatorRole);
 
         // Crear proveedor
         Provider::firstOrCreate(
@@ -68,5 +69,11 @@ class DatabaseSeeder extends Seeder
                 'tipo_persona' => 'Jurídica',
             ]
         );
+
+        //Crear correo de prueba para notificaciones
+        Setting::firstOrCreate(['id' => 1], [
+            'accounting_email' => 'contabilidad@example.com',
+            'maintenance_email' => 'mantenimiento@example.com',
+        ]);
     }
 }
