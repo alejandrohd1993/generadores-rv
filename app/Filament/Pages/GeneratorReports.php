@@ -16,6 +16,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class GeneratorReports extends Page implements HasTable
 {
@@ -98,6 +99,9 @@ class GeneratorReports extends Page implements HasTable
                     ->getStateUsing(function ($record) {
                         return $this->getHorasTrabajadas($record->id);
                     }),
+            ])
+             ->bulkActions([
+                ExportBulkAction::make()
             ])
             ->filters([
                 Filter::make('date_range')
