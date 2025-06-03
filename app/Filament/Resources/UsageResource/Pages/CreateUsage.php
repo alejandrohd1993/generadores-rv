@@ -188,6 +188,7 @@ class CreateUsage extends CreateRecord
             ->title('Mantenimiento próximo')
             ->body("El generador {$generator->codigo} necesitará mantenimiento de {$tipoMantenimiento} pronto. Ha acumulado {$horasFormateadas} horas desde el último mantenimiento. Faltan aproximadamente {$horasFaltantesFormateadas} horas para alcanzar el límite de {$limiteHoras} horas.")
             ->info()
+            ->persistent()
             ->actions([
                 Action::make('ver_generador')
                     ->button()

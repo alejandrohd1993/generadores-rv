@@ -18,7 +18,7 @@
             padding: 20px;
         }
         .header {
-            background-color: #4a6cf7;
+            background-color: #E02317;
             color: white;
             padding: 10px;
             text-align: center;
@@ -36,7 +36,7 @@
         }
         .button {
             display: inline-block;
-            background-color: #4a6cf7;
+            background-color: #E02317;
             color: white;
             padding: 10px 20px;
             text-decoration: none;

@@ -18,7 +18,7 @@
             padding: 20px;
         }
         .header {
-            background-color: #4a6cf7;
+            background-color: #E02317;
             color: white;
             padding: 10px;
             text-align: center;
@@ -36,7 +36,7 @@
         }
         .button {
             display: inline-block;
-            background-color: #4a6cf7;
+            background-color: #E02317;
             color: white;
             padding: 10px 20px;
             text-decoration: none;
@@ -61,7 +61,7 @@
         .highlight {
             background-color: #e6f7ff;
             padding: 10px;
-            border-left: 4px solid #4a6cf7;
+            border-left: 4px solid #E02317;
             margin: 20px 0;
         }
     </style>
@@ -103,10 +103,10 @@
                     <th>Operador</th>
                     <td>{{ $servicio->user->name }}</td>
                 </tr>
-                {{-- <tr>
-                    <th>Presupuesto Total</th>
-                    <td>${{ $servicio->presupuesto_total }}</td>
-                </tr> --}}
+                <tr>
+                    <th>Valor Servicio</th>
+                    <td>${{ number_format($servicio->valor_servicio, 2, ',', '.') }}</td>
+                </tr>
             </table>
             
             <h3>Generadores Utilizados:</h3>

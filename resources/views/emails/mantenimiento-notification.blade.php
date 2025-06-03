@@ -18,7 +18,7 @@
             padding: 20px;
         }
         .header {
-            background-color: {{ $esProximo ? '#3498db' : '#e74c3c' }};
+            background-color: {{ $esProximo ? '#E02317' : '#E02317' }};
             color: white;
             padding: 10px;
             text-align: center;
@@ -36,7 +36,7 @@
         }
         .button {
             display: inline-block;
-            background-color: {{ $esProximo ? '#3498db' : '#e74c3c' }};
+            background-color: {{ $esProximo ? '#E02317' : '#E02317' }};
             color: white;
             padding: 10px 20px;
             text-decoration: none;
