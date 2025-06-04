@@ -10,6 +10,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -126,7 +127,7 @@ class GeneratorResource extends Resource
                         return $ultimoUsage ? $ultimoUsage->horometro_fin : $record->horometro ?? 'N/A';
                     }),
                     Tables\Columns\TextColumn::make('tiempo_restante_filtro')
-                    ->label('Tiempo Restante Filtro')
+                    ->label('Tiempo Rest. Filtro ACPM')
                     ->getStateUsing(function (Generator $record): string {
                         $ultimoHorometro = $record->usages()->orderBy('created_at', 'desc')->first()?->horometro_fin ?? $record->horometro;
                         
@@ -200,7 +201,7 @@ class GeneratorResource extends Resource
                         }
                     }),
                     Tables\Columns\TextColumn::make('tiempo_restante_aceite')
-                    ->label('Tiempo Restante Aceite')
+                    ->label('Tiempo Rest. Aceite')
                     ->getStateUsing(function (Generator $record): string {
                         $ultimoHorometro = $record->usages()->orderBy('created_at', 'desc')->first()?->horometro_fin ?? $record->horometro;
                         
@@ -286,7 +287,10 @@ class GeneratorResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+               ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
