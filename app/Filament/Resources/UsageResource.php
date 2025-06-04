@@ -41,7 +41,6 @@ class UsageResource extends Resource
         $fecha_inicio = request()->query('fecha_inicio');
         $fecha_final = request()->query('fecha_final');
         $fecha = request()->query('fecha');
-        $generador_id = request()->query('generador_id');
 
         return $form
             ->schema([
@@ -91,7 +90,6 @@ class UsageResource extends Resource
                 Forms\Components\Select::make('generator_id')
                     ->label('Generador')
                     ->required()
-                    ->default($generador_id)
                     ->options(function (Forms\Get $get) {
                         $tipo = $get('tipo');
                         $referenceId = $get('reference_id');

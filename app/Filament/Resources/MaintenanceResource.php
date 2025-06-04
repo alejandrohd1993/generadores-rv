@@ -142,7 +142,6 @@ class MaintenanceResource extends Resource
                             'tipo' => 'mantenimiento',
                             'service_id' => $record->id,
                             'fecha' => $record->fecha,
-                            'generador_id' => $record->generator_id,
                         ])),
                     Tables\Actions\DeleteAction::make(),
                 ])
