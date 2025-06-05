@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Customer;
 use App\Models\Provider;
 use App\Models\Setting;
+use App\Models\Suplly;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -51,7 +52,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'consumidorfinal@mail.com'],
             [
                 'nit' => '222222222222',
-                'nombre' => 'Consumidor Final',
+                'nombre' => 'Colaboradores RV',
                 'telefono' => '1234567890',
                 'direccion' => 'Calle 123',
                 'tipo_persona' => 'Jurídica',
@@ -74,6 +75,24 @@ class DatabaseSeeder extends Seeder
         Setting::firstOrCreate(['id' => 1], [
             'accounting_email' => 'contabilidad@example.com',
             'maintenance_email' => 'mantenimiento@example.com',
+        ]);
+
+        Suplly::create([
+            'tipo' => 'aceite',
+            'nombre' => 'Aceite Mobil 350 horas',
+            'horas' => 350,
+        ]);
+
+        Suplly::create([
+            'tipo' => 'aceite',
+            'nombre' => 'Aceite Antonio spath 200 horas',
+            'horas' => 200,
+        ]);
+
+        Suplly::create([
+            'tipo' => 'filtro',
+            'nombre' => 'Filtro 100 horas',
+            'horas' => 100,
         ]);
     }
 }

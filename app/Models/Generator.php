@@ -35,4 +35,6 @@ class Generator extends Model
     {
         return $this->hasMany(Usage::class);
     }
+
+
 }

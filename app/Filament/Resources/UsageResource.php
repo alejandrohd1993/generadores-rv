@@ -34,6 +34,11 @@ class UsageResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false; // oculto del menú lateral
+    }
+
     public static function form(Form $form): Form
     {
         $tipo = request()->query('tipo');

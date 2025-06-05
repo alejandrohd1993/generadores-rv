@@ -19,18 +19,18 @@ class CreateGenerator extends CreateRecord
 
         // Crear registro de uso para mantenimiento de filtro si se proporcionó la fecha
         if (isset($data['ultimo_mantenimiento_filtro']) && $data['ultimo_mantenimiento_filtro']) {
-            $this->createUsageRecord('filtro', $data['ultimo_mantenimiento_filtro']);
+            $this->createUsageRecord('filtro', $data['ultimo_mantenimiento_filtro'], $data['filtro_suplly_id'] ?? null);
         }
 
         // Crear registro de uso para mantenimiento de aceite si se proporcionó la fecha
         if (isset($data['ultimo_mantenimiento_aceite']) && $data['ultimo_mantenimiento_aceite']) {
-            $this->createUsageRecord('aceite', $data['ultimo_mantenimiento_aceite']);
+            $this->createUsageRecord('aceite', $data['ultimo_mantenimiento_aceite'], $data['aceite_suplly_id'] ?? null);
         }
 
         $this->createInitialUsage();
     }
 
-    protected function createUsageRecord(string $tipoMantenimiento, string $horometro): void
+    protected function createUsageRecord(string $tipoMantenimiento, string $horometro, ?int $supllyId = null): void
     {
         // Crear un mantenimiento ficticio para asociarlo al uso
         $maintenance = Maintenance::create([
@@ -42,6 +42,7 @@ class CreateGenerator extends CreateRecord
             'fecha' => '2025-01-01',
             'provider_id' => 1,
             'estado' => 'Completado',
+            'suplly_id' => $supllyId,
         ]);
 
         // Crear el registro de uso asociado al mantenimiento

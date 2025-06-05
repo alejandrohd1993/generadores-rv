@@ -53,6 +53,20 @@ class MaintenanceResource extends Resource
                         'filtro' => 'Filtro',
                         'otro' => 'Otro',
                     ])
+                    ->live()
+                    ->afterStateUpdated(function ($state, Forms\Set $set) {
+                        $set('suplly_id', null); // Resetear el insumo cuando cambia el tipo
+                    })
+                    ->required(),
+                Forms\Components\Select::make('suplly_id')
+                    ->label('Insumo')
+                    ->relationship(
+                        name: 'suplly',
+                        titleAttribute: 'nombre',
+                        modifyQueryUsing: fn (Builder $query, Forms\Get $get) => 
+                            $query->where('tipo', $get('tipo_mantenimiento'))
+                    )
+                    ->preload()
                     ->required(),
                 Forms\Components\Select::make('categoria_mantenimiento')
                     ->options([

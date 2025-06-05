@@ -58,8 +58,24 @@ class GeneratorResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('ultimo_mantenimiento_filtro')
                             ->label('Horómetro Último Mantenimiento de Filtro'),
+                        Forms\Components\Select::make('filtro_suplly_id')
+                            ->label('Insumo utilizado (Filtro)')
+                            ->options(function () {
+                                return \App\Models\Suplly::where('tipo', 'filtro')
+                                    ->pluck('nombre', 'id')
+                                    ->toArray();
+                            })
+                            ->preload(),
                         Forms\Components\TextInput::make('ultimo_mantenimiento_aceite')
                             ->label('Horómetro Último Mantenimiento de Aceite'),
+                        Forms\Components\Select::make('aceite_suplly_id')
+                            ->label('Insumo utilizado (Aceite)')
+                            ->options(function () {
+                                return \App\Models\Suplly::where('tipo', 'aceite')
+                                    ->pluck('nombre', 'id')
+                                    ->toArray();
+                            })
+                            ->preload(),
                     ])
                     ->columns(2),
             ]);
@@ -94,12 +110,12 @@ class GeneratorResource extends Resource
                             })
                             ->orderBy('created_at', 'desc')
                             ->first();
-                            
-                        return $ultimoMantenimientoFiltro 
-                            ? $ultimoMantenimientoFiltro->horometro_fin 
+
+                        return $ultimoMantenimientoFiltro
+                            ? $ultimoMantenimientoFiltro->horometro_fin
                             : ($record->ultimo_mantenimiento_filtro ?? 'N/A');
                     }),
-                    Tables\Columns\TextColumn::make('ultimo_mantenimiento_aceite')
+                Tables\Columns\TextColumn::make('ultimo_mantenimiento_aceite')
                     ->label('Último Mant. Aceite')
                     ->getStateUsing(function (Generator $record): string {
                         $ultimoMantenimientoAceite = $record->usages()
@@ -115,9 +131,9 @@ class GeneratorResource extends Resource
                             })
                             ->orderBy('created_at', 'desc')
                             ->first();
-                            
-                        return $ultimoMantenimientoAceite 
-                            ? $ultimoMantenimientoAceite->horometro_fin 
+
+                        return $ultimoMantenimientoAceite
+                            ? $ultimoMantenimientoAceite->horometro_fin
                             : ($record->ultimo_mantenimiento_aceite ?? 'N/A');
                     }),
                 Tables\Columns\TextColumn::make('ultimo_horometro')
@@ -126,12 +142,11 @@ class GeneratorResource extends Resource
                         $ultimoUsage = $record->usages()->orderBy('created_at', 'desc')->first();
                         return $ultimoUsage ? $ultimoUsage->horometro_fin : $record->horometro ?? 'N/A';
                     }),
-                    Tables\Columns\TextColumn::make('tiempo_restante_filtro')
+                Tables\Columns\TextColumn::make('tiempo_restante_filtro')
                     ->label('Tiempo Rest. Filtro ACPM')
                     ->getStateUsing(function (Generator $record): string {
                         $ultimoHorometro = $record->usages()->orderBy('created_at', 'desc')->first()?->horometro_fin ?? $record->horometro;
-                        
-                        // Obtener el último mantenimiento de filtro desde usages
+
                         $ultimoMantenimientoFiltro = $record->usages()
                             ->where('tipo', 'mantenimiento')
                             ->whereExists(function ($query) {
@@ -142,30 +157,31 @@ class GeneratorResource extends Resource
                             })
                             ->orderBy('created_at', 'desc')
                             ->first();
-                        
-                        $horometroUltimoMantenimiento = $ultimoMantenimientoFiltro 
-                            ? $ultimoMantenimientoFiltro->horometro_fin 
-                            : $record->ultimo_mantenimiento_filtro;
-                        
+
+                        $horometroUltimoMantenimiento = $ultimoMantenimientoFiltro?->horometro_fin ?? $record->ultimo_mantenimiento_filtro;
+
                         if (!$ultimoHorometro || !$horometroUltimoMantenimiento) {
                             return 'N/A';
                         }
-                        
+
                         $horasUltimoMantenimiento = self::convertirHorasADecimal($horometroUltimoMantenimiento);
                         $horasActuales = self::convertirHorasADecimal($ultimoHorometro);
                         $horasTranscurridas = $horasActuales - $horasUltimoMantenimiento;
-                        $horasRestantes = 100 - $horasTranscurridas;
-                        
+
+                        // ⚠️ Obtener las horas del insumo asociado
+                        $horasParaElInsumo = optional($ultimoMantenimientoFiltro->reference_model?->suplly)->horas ?? 100;
+
+                        $horasRestantes = $horasParaElInsumo - $horasTranscurridas;
+
                         if ($horasRestantes <= 0) {
                             return 'Mantenimiento requerido';
                         }
-                        
+
                         return self::convertirDecimalAHoras($horasRestantes);
                     })
                     ->color(function (Generator $record): string {
                         $ultimoHorometro = $record->usages()->orderBy('created_at', 'desc')->first()?->horometro_fin ?? $record->horometro;
-                        
-                        // Obtener el último mantenimiento de filtro desde usages
+                    
                         $ultimoMantenimientoFiltro = $record->usages()
                             ->where('tipo', 'mantenimiento')
                             ->whereExists(function ($query) {
@@ -176,36 +192,35 @@ class GeneratorResource extends Resource
                             })
                             ->orderBy('created_at', 'desc')
                             ->first();
-                        
-                        $horometroUltimoMantenimiento = $ultimoMantenimientoFiltro 
-                            ? $ultimoMantenimientoFiltro->horometro_fin 
-                            : $record->ultimo_mantenimiento_filtro;
-                        
+                    
+                        $horometroUltimoMantenimiento = $ultimoMantenimientoFiltro?->horometro_fin ?? $record->ultimo_mantenimiento_filtro;
+                    
                         if (!$ultimoHorometro || !$horometroUltimoMantenimiento) {
                             return 'gray';
                         }
-                        
+                    
                         $horasUltimoMantenimiento = self::convertirHorasADecimal($horometroUltimoMantenimiento);
                         $horasActuales = self::convertirHorasADecimal($ultimoHorometro);
                         $horasTranscurridas = $horasActuales - $horasUltimoMantenimiento;
-                        $horasRestantes = 100 - $horasTranscurridas;
-                        
+                    
+                        $horasParaElInsumo = optional($ultimoMantenimientoFiltro->reference?->suplly)->horas ?? 100;
+                        $horasRestantes = $horasParaElInsumo - $horasTranscurridas;
+                    
                         if ($horasRestantes <= 0) {
                             return 'danger';
-                        } elseif ($horasRestantes <= 20) {
+                        } elseif ($horasRestantes <= $horasParaElInsumo * 0.2) {
                             return 'danger';
-                        } elseif ($horasRestantes <= 50) {
+                        } elseif ($horasRestantes <= $horasParaElInsumo * 0.5) {
                             return 'warning';
                         } else {
                             return 'success';
                         }
                     }),
-                    Tables\Columns\TextColumn::make('tiempo_restante_aceite')
+                Tables\Columns\TextColumn::make('tiempo_restante_aceite')
                     ->label('Tiempo Rest. Aceite')
                     ->getStateUsing(function (Generator $record): string {
                         $ultimoHorometro = $record->usages()->orderBy('created_at', 'desc')->first()?->horometro_fin ?? $record->horometro;
-                        
-                        // Obtener el último mantenimiento de aceite desde usages
+
                         $ultimoMantenimientoAceite = $record->usages()
                             ->where('tipo', 'mantenimiento')
                             ->whereExists(function ($query) {
@@ -216,30 +231,31 @@ class GeneratorResource extends Resource
                             })
                             ->orderBy('created_at', 'desc')
                             ->first();
-                        
-                        $horometroUltimoMantenimiento = $ultimoMantenimientoAceite 
-                            ? $ultimoMantenimientoAceite->horometro_fin 
-                            : $record->ultimo_mantenimiento_aceite;
-                        
+
+                        $horometroUltimoMantenimiento = $ultimoMantenimientoAceite?->horometro_fin ?? $record->ultimo_mantenimiento_aceite;
+
                         if (!$ultimoHorometro || !$horometroUltimoMantenimiento) {
                             return 'N/A';
                         }
-                        
+
                         $horasUltimoMantenimiento = self::convertirHorasADecimal($horometroUltimoMantenimiento);
                         $horasActuales = self::convertirHorasADecimal($ultimoHorometro);
                         $horasTranscurridas = $horasActuales - $horasUltimoMantenimiento;
-                        $horasRestantes = 200 - $horasTranscurridas;
-                        
+
+                        // ⚠️ Obtener las horas del insumo asociado
+                        $horasParaElInsumo = optional($ultimoMantenimientoAceite->reference_model?->suplly)->horas ?? 200;
+
+                        $horasRestantes = $horasParaElInsumo - $horasTranscurridas;
+
                         if ($horasRestantes <= 0) {
                             return 'Mantenimiento requerido';
                         }
-                        
+
                         return self::convertirDecimalAHoras($horasRestantes);
                     })
                     ->color(function (Generator $record): string {
                         $ultimoHorometro = $record->usages()->orderBy('created_at', 'desc')->first()?->horometro_fin ?? $record->horometro;
-                        
-                        // Obtener el último mantenimiento de aceite desde usages
+                    
                         $ultimoMantenimientoAceite = $record->usages()
                             ->where('tipo', 'mantenimiento')
                             ->whereExists(function ($query) {
@@ -250,25 +266,25 @@ class GeneratorResource extends Resource
                             })
                             ->orderBy('created_at', 'desc')
                             ->first();
-                        
-                        $horometroUltimoMantenimiento = $ultimoMantenimientoAceite 
-                            ? $ultimoMantenimientoAceite->horometro_fin 
-                            : $record->ultimo_mantenimiento_aceite;
-                        
+                    
+                        $horometroUltimoMantenimiento = $ultimoMantenimientoAceite?->horometro_fin ?? $record->ultimo_mantenimiento_filtro;
+                    
                         if (!$ultimoHorometro || !$horometroUltimoMantenimiento) {
                             return 'gray';
                         }
-                        
+                    
                         $horasUltimoMantenimiento = self::convertirHorasADecimal($horometroUltimoMantenimiento);
                         $horasActuales = self::convertirHorasADecimal($ultimoHorometro);
                         $horasTranscurridas = $horasActuales - $horasUltimoMantenimiento;
-                        $horasRestantes = 200 - $horasTranscurridas;
-                        
+                    
+                        $horasParaElInsumo = optional($ultimoMantenimientoAceite->reference?->suplly)->horas ?? 200;
+                        $horasRestantes = $horasParaElInsumo - $horasTranscurridas;
+                    
                         if ($horasRestantes <= 0) {
                             return 'danger';
-                        } elseif ($horasRestantes <= 40) {
+                        } elseif ($horasRestantes <= $horasParaElInsumo * 0.2) {
                             return 'danger';
-                        } elseif ($horasRestantes <= 100) {
+                        } elseif ($horasRestantes <= $horasParaElInsumo * 0.5) {
                             return 'warning';
                         } else {
                             return 'success';
@@ -287,7 +303,7 @@ class GeneratorResource extends Resource
                 //
             ])
             ->actions([
-               ActionGroup::make([
+                ActionGroup::make([
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                 ])
@@ -305,27 +321,27 @@ class GeneratorResource extends Resource
         if (empty($horasFormato)) {
             return 0;
         }
-        
+
         $partes = explode(':', $horasFormato);
-        
+
         if (count($partes) !== 3) {
             return 0;
         }
-        
+
         $horas = (int) $partes[0];
         $minutos = (int) $partes[1];
         $segundos = (int) $partes[2];
-        
+
         return $horas + ($minutos / 60) + ($segundos / 3600);
     }
-    
+
     private static function convertirDecimalAHoras(float $horasDecimal): string
     {
         $horas = floor($horasDecimal);
         $minutosDecimal = ($horasDecimal - $horas) * 60;
         $minutos = floor($minutosDecimal);
         $segundos = floor(($minutosDecimal - $minutos) * 60);
-        
+
         return sprintf('%03d:%02d:%02d', $horas, $minutos, $segundos);
     }
 

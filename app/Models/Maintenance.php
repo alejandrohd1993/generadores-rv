@@ -12,6 +12,7 @@ class Maintenance extends Model
         'user_id',
         'generator_id',
         'tipo_mantenimiento',
+        'suplly_id',
         'categoria_mantenimiento',
         'fecha',
         'provider_id',
@@ -38,5 +39,10 @@ class Maintenance extends Model
     public function usages()
     {
         return Usage::where('tipo', 'mantenimiento')->where('reference_id', $this->id);
+    }
+
+    public function suplly(): BelongsTo
+    {
+        return $this->belongsTo(Suplly::class);
     }
 }
