@@ -203,13 +203,13 @@ class GeneratorResource extends Resource
                         $horasActuales = self::convertirHorasADecimal($ultimoHorometro);
                         $horasTranscurridas = $horasActuales - $horasUltimoMantenimiento;
                     
-                        $horasParaElInsumo = optional($ultimoMantenimientoFiltro->reference?->suplly)->horas ?? 100;
+                        $horasParaElInsumo = optional($ultimoMantenimientoFiltro->reference_model?->suplly)->horas ?? 100;
                         $horasRestantes = $horasParaElInsumo - $horasTranscurridas;
                     
                         if ($horasRestantes <= 0) {
                             return 'danger';
                         } elseif ($horasRestantes <= $horasParaElInsumo * 0.2) {
-                            return 'danger';
+                            return 'warning';
                         } elseif ($horasRestantes <= $horasParaElInsumo * 0.5) {
                             return 'warning';
                         } else {
@@ -277,13 +277,13 @@ class GeneratorResource extends Resource
                         $horasActuales = self::convertirHorasADecimal($ultimoHorometro);
                         $horasTranscurridas = $horasActuales - $horasUltimoMantenimiento;
                     
-                        $horasParaElInsumo = optional($ultimoMantenimientoAceite->reference?->suplly)->horas ?? 200;
+                        $horasParaElInsumo = optional($ultimoMantenimientoAceite->reference_model?->suplly)->horas ?? 200;
                         $horasRestantes = $horasParaElInsumo - $horasTranscurridas;
                     
                         if ($horasRestantes <= 0) {
                             return 'danger';
                         } elseif ($horasRestantes <= $horasParaElInsumo * 0.2) {
-                            return 'danger';
+                            return 'warning';
                         } elseif ($horasRestantes <= $horasParaElInsumo * 0.5) {
                             return 'warning';
                         } else {

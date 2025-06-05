@@ -5,6 +5,7 @@ namespace App\Filament\Resources\UsageResource\Pages;
 use App\Filament\Resources\UsageResource;
 use App\Mail\MantenimientoNotification;
 use App\Models\Usage;
+use App\Models\Suplly;
 use Filament\Actions;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
@@ -58,6 +59,18 @@ class CreateUsage extends CreateRecord
         // Convertir el horometro a horas numéricas
         $ultimoHorometro = $this->convertirHorometroAHoras($ultimoHorometroStr);
 
+        // Obtener los insumos para mantenimiento de filtro y aceite
+        $insumoFiltro = Suplly::where('tipo', 'filtro')->first();
+        $insumoAceite = Suplly::where('tipo', 'aceite')->first();
+
+        // Obtener las horas límite para cada tipo de mantenimiento
+        $horasLimiteFiltro = $insumoFiltro ? (float)$insumoFiltro->horas : 100; // Valor por defecto si no hay insumo
+        $horasLimiteAceite = $insumoAceite ? (float)$insumoAceite->horas : 200; // Valor por defecto si no hay insumo
+
+        // Calcular el umbral para notificaciones de mantenimiento próximo (20% antes)
+        $umbralProximoFiltro = $horasLimiteFiltro * 0.8; // 80% del límite (falta 20%)
+        $umbralProximoAceite = $horasLimiteAceite * 0.8; // 80% del límite (falta 20%)
+
         // Obtener el último mantenimiento de filtro para este generador
         $ultimoMantenimientoFiltro = Usage::where('generator_id', $generatorId)
             ->where('tipo', 'mantenimiento')
@@ -106,22 +119,22 @@ class CreateUsage extends CreateRecord
             $horasDesdeUltimoAceite = $ultimoHorometro;
         }
 
-        // Verificar si se necesita mantenimiento de filtro (cada 100 horas)
-        if ($horasDesdeUltimoFiltro >= 100) {
-            $this->notificarMantenimientoRequerido($usage->generator, 'filtro', $horasDesdeUltimoFiltro);
+        // Verificar si se necesita mantenimiento de filtro
+        if ($horasDesdeUltimoFiltro >= $horasLimiteFiltro) {
+            $this->notificarMantenimientoRequerido($usage->generator, 'filtro', $horasDesdeUltimoFiltro, $horasLimiteFiltro);
         }
-        // Verificar si está próximo a necesitar mantenimiento de filtro (30 horas antes)
-        elseif ($horasDesdeUltimoFiltro >= 70 && $horasDesdeUltimoFiltro < 100) {
-            $this->notificarMantenimientoProximo($usage->generator, 'filtro', $horasDesdeUltimoFiltro, 100 - $horasDesdeUltimoFiltro);
+        // Verificar si está próximo a necesitar mantenimiento de filtro (cuando falta el 20% de las horas)
+        elseif ($horasDesdeUltimoFiltro >= $umbralProximoFiltro && $horasDesdeUltimoFiltro < $horasLimiteFiltro) {
+            $this->notificarMantenimientoProximo($usage->generator, 'filtro', $horasDesdeUltimoFiltro, $horasLimiteFiltro - $horasDesdeUltimoFiltro, $horasLimiteFiltro);
         }
 
-        // Verificar si se necesita mantenimiento de aceite (cada 200 horas)
-        if ($horasDesdeUltimoAceite >= 200) {
-            $this->notificarMantenimientoRequerido($usage->generator, 'aceite', $horasDesdeUltimoAceite);
+        // Verificar si se necesita mantenimiento de aceite
+        if ($horasDesdeUltimoAceite >= $horasLimiteAceite) {
+            $this->notificarMantenimientoRequerido($usage->generator, 'aceite', $horasDesdeUltimoAceite, $horasLimiteAceite);
         }
-        // Verificar si está próximo a necesitar mantenimiento de aceite (50 horas antes)
-        elseif ($horasDesdeUltimoAceite >= 150 && $horasDesdeUltimoAceite < 200) {
-            $this->notificarMantenimientoProximo($usage->generator, 'aceite', $horasDesdeUltimoAceite, 200 - $horasDesdeUltimoAceite);
+        // Verificar si está próximo a necesitar mantenimiento de aceite (cuando falta el 20% de las horas)
+        elseif ($horasDesdeUltimoAceite >= $umbralProximoAceite && $horasDesdeUltimoAceite < $horasLimiteAceite) {
+            $this->notificarMantenimientoProximo($usage->generator, 'aceite', $horasDesdeUltimoAceite, $horasLimiteAceite - $horasDesdeUltimoAceite, $horasLimiteAceite);
         }
     }
 
@@ -144,10 +157,8 @@ class CreateUsage extends CreateRecord
         return $horas + ($minutos / 60) + ($segundos / 3600);
     }
 
-    protected function notificarMantenimientoRequerido($generator, $tipoMantenimiento, $horasAcumuladas): void
+    protected function notificarMantenimientoRequerido($generator, $tipoMantenimiento, $horasAcumuladas, $limiteHoras): void
     {
-        $limiteHoras = ($tipoMantenimiento === 'filtro') ? 100 : 200;
-
         // Formatear las horas acumuladas para mostrar solo 2 decimales
         $horasFormateadas = number_format($horasAcumuladas, 2);
 
@@ -175,10 +186,8 @@ class CreateUsage extends CreateRecord
             ));
     }
 
-    protected function notificarMantenimientoProximo($generator, $tipoMantenimiento, $horasAcumuladas, $horasFaltantes): void
+    protected function notificarMantenimientoProximo($generator, $tipoMantenimiento, $horasAcumuladas, $horasFaltantes, $limiteHoras): void
     {
-        $limiteHoras = ($tipoMantenimiento === 'filtro') ? 100 : 200;
-
         // Formatear las horas para mostrar solo 2 decimales
         $horasFormateadas = number_format($horasAcumuladas, 2);
         $horasFaltantesFormateadas = number_format($horasFaltantes, 2);
