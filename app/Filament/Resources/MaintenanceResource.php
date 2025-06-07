@@ -12,6 +12,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -63,8 +64,8 @@ class MaintenanceResource extends Resource
                     ->relationship(
                         name: 'suplly',
                         titleAttribute: 'nombre',
-                        modifyQueryUsing: fn (Builder $query, Forms\Get $get) => 
-                            $query->where('tipo', $get('tipo_mantenimiento'))
+                        modifyQueryUsing: fn(Builder $query, Forms\Get $get) =>
+                        $query->where('tipo', $get('tipo_mantenimiento'))
                     )
                     ->preload()
                     ->required(),
@@ -136,7 +137,13 @@ class MaintenanceResource extends Resource
             ])
             ->defaultSort('fecha', 'desc')
             ->filters([
-                //
+                SelectFilter::make('estado')
+                    ->options([
+                        'Pendiente' => 'Pendiente',
+                        'En proceso' => 'En proceso',
+                        'Completado' => 'Completado',
+                        'Cancelado' => 'Cancelado',
+                    ]),
             ])
             ->actions([
                 ActionGroup::make([
