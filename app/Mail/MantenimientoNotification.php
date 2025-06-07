@@ -23,14 +23,15 @@ class MantenimientoNotification extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct($generador, $tipoMantenimiento, $horasAcumuladas, $horasFaltantes = 0, $esProximo = false)
+    public function __construct($generador, $tipoMantenimiento, $horasAcumuladas, $horasFaltantes = 0, $esProximo = false, $limiteHoras = null)
     {
         $this->generador = $generador;
         $this->tipoMantenimiento = $tipoMantenimiento;
         $this->horasAcumuladas = $horasAcumuladas;
         $this->horasFaltantes = $horasFaltantes;
         $this->esProximo = $esProximo;
-        $this->limiteHoras = ($tipoMantenimiento === 'filtro') ? 100 : 200;
+        // Si no se proporciona un límite, usar los valores por defecto
+        $this->limiteHoras = $limiteHoras ?? (($tipoMantenimiento === 'filtro') ? 100 : 200);
     }
 
     /**

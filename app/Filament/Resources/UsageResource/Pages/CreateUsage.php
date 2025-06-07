@@ -59,18 +59,6 @@ class CreateUsage extends CreateRecord
         // Convertir el horometro a horas numéricas
         $ultimoHorometro = $this->convertirHorometroAHoras($ultimoHorometroStr);
 
-        // Obtener los insumos para mantenimiento de filtro y aceite
-        $insumoFiltro = Suplly::where('tipo', 'filtro')->first();
-        $insumoAceite = Suplly::where('tipo', 'aceite')->first();
-
-        // Obtener las horas límite para cada tipo de mantenimiento
-        $horasLimiteFiltro = $insumoFiltro ? (float)$insumoFiltro->horas : 100; // Valor por defecto si no hay insumo
-        $horasLimiteAceite = $insumoAceite ? (float)$insumoAceite->horas : 200; // Valor por defecto si no hay insumo
-
-        // Calcular el umbral para notificaciones de mantenimiento próximo (20% antes)
-        $umbralProximoFiltro = $horasLimiteFiltro * 0.8; // 80% del límite (falta 20%)
-        $umbralProximoAceite = $horasLimiteAceite * 0.8; // 80% del límite (falta 20%)
-
         // Obtener el último mantenimiento de filtro para este generador
         $ultimoMantenimientoFiltro = Usage::where('generator_id', $generatorId)
             ->where('tipo', 'mantenimiento')
@@ -98,6 +86,18 @@ class CreateUsage extends CreateRecord
             })
             ->orderBy('created_at', 'desc')
             ->first();
+
+        // Obtener los insumos para mantenimiento de filtro y aceite
+        $insumoFiltro = (float)optional($ultimoMantenimientoFiltro->reference_model?->suplly)->horas ?? 100;
+        $insumoAceite = (float)optional($ultimoMantenimientoAceite->reference_model?->suplly)->horas ?? 250;
+
+        // Obtener las horas límite para cada tipo de mantenimiento
+        $horasLimiteFiltro = $insumoFiltro; // Valor por defecto si no hay insumo
+        $horasLimiteAceite = $insumoAceite; // Valor por defecto si no hay insumo
+
+        // Calcular el umbral para notificaciones de mantenimiento próximo (20% antes)
+        $umbralProximoFiltro = $horasLimiteFiltro * 0.8; // 80% del límite (falta 20%)
+        $umbralProximoAceite = $horasLimiteAceite * 0.8; // 80% del límite (falta 20%)
 
         // Calcular horas desde el último mantenimiento de filtro
         $horasDesdeUltimoFiltro = 0;
@@ -182,7 +182,8 @@ class CreateUsage extends CreateRecord
                 $tipoMantenimiento,
                 $horasAcumuladas,
                 0,
-                false
+                false,
+                $limiteHoras // Pasar el límite de horas
             ));
     }
 
@@ -212,7 +213,8 @@ class CreateUsage extends CreateRecord
                 $tipoMantenimiento,
                 $horasAcumuladas,
                 $horasFaltantes,
-                true
+                true,
+                $limiteHoras // Pasar el límite de horas
             ));
     }
 }

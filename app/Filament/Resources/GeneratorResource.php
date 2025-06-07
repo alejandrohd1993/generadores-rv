@@ -127,7 +127,7 @@ class GeneratorResource extends Resource
                                 $query->select(DB::raw(1))
                                     ->from('maintenances')
                                     ->whereColumn('maintenances.id', 'usages.reference_id')
-                                    ->where('maintenances.tipo_mantenimiento', 'Aceite');
+                                    ->where('maintenances.tipo_mantenimiento', 'aceite');
                             })
                             ->orderBy('created_at', 'desc')
                             ->first();
@@ -153,7 +153,7 @@ class GeneratorResource extends Resource
                                 $query->select(DB::raw(1))
                                     ->from('maintenances')
                                     ->whereColumn('maintenances.id', 'usages.reference_id')
-                                    ->where('maintenances.tipo_mantenimiento', 'Filtro');
+                                    ->where('maintenances.tipo_mantenimiento', 'filtro');
                             })
                             ->orderBy('created_at', 'desc')
                             ->first();
@@ -188,7 +188,7 @@ class GeneratorResource extends Resource
                                 $query->select(DB::raw(1))
                                     ->from('maintenances')
                                     ->whereColumn('maintenances.id', 'usages.reference_id')
-                                    ->where('maintenances.tipo_mantenimiento', 'Filtro');
+                                    ->where('maintenances.tipo_mantenimiento', 'filtro');
                             })
                             ->orderBy('created_at', 'desc')
                             ->first();
@@ -227,7 +227,7 @@ class GeneratorResource extends Resource
                                 $query->select(DB::raw(1))
                                     ->from('maintenances')
                                     ->whereColumn('maintenances.id', 'usages.reference_id')
-                                    ->where('maintenances.tipo_mantenimiento', 'Aceite');
+                                    ->where('maintenances.tipo_mantenimiento', 'aceite');
                             })
                             ->orderBy('created_at', 'desc')
                             ->first();
@@ -262,7 +262,7 @@ class GeneratorResource extends Resource
                                 $query->select(DB::raw(1))
                                     ->from('maintenances')
                                     ->whereColumn('maintenances.id', 'usages.reference_id')
-                                    ->where('maintenances.tipo_mantenimiento', 'Aceite');
+                                    ->where('maintenances.tipo_mantenimiento', 'aceite');
                             })
                             ->orderBy('created_at', 'desc')
                             ->first();
